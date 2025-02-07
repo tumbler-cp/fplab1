@@ -1,0 +1,74 @@
+name: .NET CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  formatcheck:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:6.0
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update -yq
+          apt-get install -y nuget
+          apt-get install -y dotnet-sdk-8.0
+          nuget restore
+          dotnet tool install fantomas --version 6.0
+          dotnet tool install fake-cli dotnet-fsharplint paket
+          dotnet paket install
+
+      - name: Run Fantomas format check
+        run: dotnet fantomas --check problem12 Tests
+
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:6.0
+    needs: formatcheck
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update -yq
+          apt-get install -y nuget
+          apt-get install -y dotnet-sdk-8.0
+          nuget restore
+          dotnet tool install fake-cli dotnet-fsharplint paket
+          dotnet paket install
+
+      - name: Build project
+        run: dotnet fake build
+
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:6.0
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update -yq
+          apt-get install -y nuget
+          apt-get install -y dotnet-sdk-8.0
+          nuget restore
+          dotnet tool install fake-cli dotnet-fsharplint paket
+          dotnet paket install
+
+      - name: Run tests
+        run: dotnet test
+

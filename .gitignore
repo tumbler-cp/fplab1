@@ -1,0 +1,67 @@
+# Compiled binaries
+**/bin/
+**/obj/
+
+# FAKE build artifacts
+/.fake/
+/build/
+/deploy/
+/dist/
+
+# Paket dependencies
+.paket/
+paket-files/
+paket.lock
+
+# .NET dependencies
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+*.pyc
+*.o
+*.a
+*.lib
+
+# Rider / VSCode / Visual Studio files
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ionide
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temp files
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# Resharper
+_ReSharper.Caches/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+*.trx
+

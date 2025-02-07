@@ -1,0 +1,8 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+
+nuget Fake.Core.Target
+nuget Fake.DotNet.Cli
+nuget Fake.DotNet.Testing.NUnit
+nuget Fake.IO.FileSystem
