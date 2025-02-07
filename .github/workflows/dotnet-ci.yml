@@ -19,13 +19,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update -yq
-          apt-get install -y nuget
-          apt-get install -y dotnet-sdk-8.0
-          nuget restore
-          dotnet tool install fantomas --version 6.0
-          dotnet tool install fake-cli dotnet-fsharplint paket
-          dotnet paket install
+          dotnet restore
+          dotnet tool restore 
 
       - name: Run Fantomas format check
         run: dotnet fantomas --check problem12 Tests
@@ -41,15 +36,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update -yq
-          apt-get install -y nuget
-          apt-get install -y dotnet-sdk-8.0
-          nuget restore
-          dotnet tool install fake-cli dotnet-fsharplint paket
-          dotnet paket install
+          dotnet restore
+          dotnet tool restore
 
       - name: Build project
-        run: dotnet fake build
+        run: dotnet build --configuration Release
 
   test:
     runs-on: ubuntu-latest
@@ -62,13 +53,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update -yq
-          apt-get install -y nuget
-          apt-get install -y dotnet-sdk-8.0
-          nuget restore
-          dotnet tool install fake-cli dotnet-fsharplint paket
-          dotnet paket install
+          dotnet restore
+          dotnet tool restore
 
       - name: Run tests
-        run: dotnet test
-
+        run: dotnet test --configuration Release --no-build 
