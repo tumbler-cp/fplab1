@@ -3,7 +3,7 @@
 
 ## Вариант
 
-**12. Highly Divisible Triangular Number** и **19. Highly Divisible Triangular Number**
+**12. Highly Divisible Triangular Number** и **19. Counting Sundays**
 
 ## Проблема №12
 Последовательность треугольных чисел образуется путем сложения натуральных чисел. К примеру, 7-е треугольное число равно 1 + 2 + 3 + 4 + 5 + 6 + 7 = 28. Первые десять треугольных чисел:
