@@ -1,4 +1,4 @@
-module Problem12.InfSeq
+module Lab1.Problem12.InfSeq
 
 let triangleNumber n = n * (n + 1) / 2
 

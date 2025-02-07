@@ -32,7 +32,7 @@ Target.create "Lint" (fun _ ->
         DotNet.exec 
             id 
             "fsharplint" 
-            "lint problem12"  
+            "lint problem12 problem19"  
             
     if not result.OK then 
         result.Errors |> Seq.iter Trace.traceError
@@ -44,7 +44,7 @@ Target.create "Format" (fun _ ->
         DotNet.exec 
             id 
             "fantomas" 
-            " --check problem12 Tests"  
+            " --check problem12 problem19 Tests"  
             
     if not result.OK then
         result.Errors |> Seq.iter Trace.traceError
@@ -56,7 +56,7 @@ Target.create "FormatCheck" (fun _ ->
         DotNet.exec 
             id 
             "fantomas" 
-            "--check problem12 Tests"
+            "--check problem12 problem19 Tests"
     if not result.OK then
         result.Errors |> Seq.iter Trace.traceError
         failwith "Formatting check failed"
@@ -67,7 +67,7 @@ Target.create "FormatFix" (fun _ ->
         DotNet.exec 
             id 
             "fantomas" 
-            "problem12 Tests"
+            "problem12 problem19 Tests"
     if not result.OK then
         result.Errors |> Seq.iter Trace.traceError
         failwith "Formatting fix failed"

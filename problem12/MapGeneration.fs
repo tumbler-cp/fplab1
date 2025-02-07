@@ -1,4 +1,4 @@
-module Problem12.MapGen
+module Lab1.Problem12.MapGen
 
 let triangleNumber n = n * (n + 1) / 2
 

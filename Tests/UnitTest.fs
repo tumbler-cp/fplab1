@@ -1,37 +1,67 @@
 ﻿module Tests
 
 open NUnit.Framework
-open Problem12
+open Lab1
 
 [<SetUp>]
 let Setup () = ()
 
 [<Test>]
 let ``Problem 12 monolit tail recursion`` () =
-    let res = Recursion.tailRecursiveSolution 500
+    let res = Problem12.Recursion.tailRecursiveSolution 500
     Assert.That(res, Is.EqualTo(76576500))
 
 [<Test>]
 let ``Problem 12 monolit recursion`` () =
-    let res = Recursion.recursiveSolution 500
+    let res = Problem12.Recursion.recursiveSolution 500
     Assert.That(res, Is.EqualTo(76576500))
 
 [<Test>]
 let ``Problem 12 modular implementation`` () =
-    let res = Modular.modularSolution ()
+    let res = Problem12.Modular.modularSolution ()
     Assert.That(res, Is.EqualTo(76576500))
 
 [<Test>]
 let ``Problem 12 generation using map`` () =
-    let res = MapGen.mapGenSolution ()
+    let res = Problem12.MapGen.mapGenSolution ()
     Assert.That(res, Is.EqualTo(76576500))
 
 [<Test>]
-let ``Loops`` () =
-    let res = Loops.loopSolution ()
+let ``Problem 12 Loops`` () =
+    let res = Problem12.Loops.loopSolution ()
     Assert.That(res, Is.EqualTo(76576500))
 
 [<Test>]
-let ``Infinite sequence`` () =
-    let res = InfSeq.infiniteSequenceSolution ()
+let ``Problem 12 Infinite sequence`` () =
+    let res = Problem12.InfSeq.infiniteSequenceSolution ()
     Assert.That(res, Is.EqualTo(76576500))
+
+[<Test>]
+let ``Problem 19 Tail recursion`` () =
+    let res = Problem19.TailRec.tailRecSolution ()
+    Assert.That(res, Is.EqualTo(171))
+
+[<Test>]
+let ``Problem 19 recursion`` () =
+    let res = Problem19.Recursive.recursiveSolution ()
+    Assert.That(res, Is.EqualTo(171))
+
+[<Test>]
+let ``Problem 19 Modular`` () =
+    let res = Problem19.Modular.modularSolution ()
+    Assert.That(res, Is.EqualTo(171))
+
+[<Test>]
+let ``Problem 19 map generation`` () =
+    let res = Problem19.MapGen.mapGenSolution ()
+    Assert.That(res, Is.EqualTo(171))
+
+[<Test>]
+let ``Problem 19 loops`` () =
+    let res = Problem19.Loops.loopsSolution ()
+    Assert.That(res, Is.EqualTo(171))
+
+[<Test>]
+let ``Problem 19 infinite sequence`` () =
+    let res = Problem19.InfSeq.infSeqSolution ()
+    Assert.That(res, Is.EqualTo(171))

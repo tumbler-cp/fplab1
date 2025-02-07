@@ -18,5 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\problem12\problem12.fsproj" />
+    <ProjectReference Include="..\problem19\problem19.fsproj" />
   </ItemGroup>
 </Project>

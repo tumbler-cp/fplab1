@@ -1,4 +1,4 @@
-﻿module Problem12.Recursion
+﻿module Lab1.Problem12.Recursion
 
 let numTriangle n = n * (n + 1) / 2
 

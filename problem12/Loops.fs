@@ -1,4 +1,4 @@
-module Problem12.Loops
+module Lab1.Problem12.Loops
 
 let triangleNumber n = n * (n + 1) / 2
 
