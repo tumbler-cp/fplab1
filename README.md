@@ -1,11 +1,11 @@
 ## Функциональное программирование
 # Лабораторная работа №1
 
-### Вариант
+## Вариант
 
 **12. Highly Divisible Triangular Number** и **19. Highly Divisible Triangular Number**
 
-### Проблема №12
+## Проблема №12
 Последовательность треугольных чисел образуется путем сложения натуральных чисел. К примеру, 7-е треугольное число равно 1 + 2 + 3 + 4 + 5 + 6 + 7 = 28. Первые десять треугольных чисел:
 
 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, ...
@@ -24,7 +24,7 @@
 
 Каково первое треугольное число, у которого более пятисот делителей?
 
-#### Хвостовая рекурсия
+### Хвостовая рекурсия
 Для генерации треугольних чисел используется
 
 ```
@@ -56,10 +56,10 @@ let rec loop n =
         if divs > minDivisors then triN else loop (n + 1)
 ```
 
-#### Обычная рекурсия
+### Обычная рекурсия
 Идентична решению с хвостовой рекурсией, т.к. 
 
-#### Модульная реализация
+### Модульная реализация
 
 Генерация треугольного числа
 ```
@@ -95,7 +95,7 @@ let modularSolution () =
     generateTriangleNumbers 100_000 |> filterTriangleNumbers |> findFirst
 ```
 
-#### Генерация с помощью map
+### Генерация с помощью map
 Вспомогательные функции идентичны функциям из рекурсивного подхода
 Функция нахождения нужного числа с помощью map
 
@@ -110,7 +110,7 @@ let mapGenSolution () =
 
 **!** Используется функция генерации последовательности из модульной реализации
 
-#### Бесконечная последовательность
+### Бесконечная последовательность
 ```
 let mapGenSolution () =
     Seq.initInfinite id
@@ -120,7 +120,7 @@ let mapGenSolution () =
 
 Да это функция из предыдущей реализации но с бесконечной последовательностью
 
-#### Циклы
+### Циклы
 Используются выражения ```for ... in ... do``` и ```while <bool> do```
 ```
 let countDivisors n =
@@ -149,3 +149,142 @@ let loopSolution () =
 
     result
 ```
+
+## Проблема №19
+Дана следующая информация (однако, вы можете проверить ее самостоятельно):
+
+    - 1 января 1900 года - понедельник.
+    - В апреле, июне, сентябре и ноябре 30 дней.
+    В феврале 28 дней, в високосный год - 29.
+    В остальных месяцах по 31 дню.
+    - Високосный год - любой год, делящийся нацело на 4, однако последний год века (ХХ00) является високосным в том и только том случае, если делится на 400.
+
+Сколько воскресений выпадает на первое число месяца в двадцатом веке (с 1 января 1901 года до 31 декабря 2000 года)?
+
+### Примечание
+Почти во всех реализацию используются этот массив дней в месяце и функция определения высокосности года
+```
+let daysInMonth = [| 31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31 |]
+
+let isLeapYear year =
+    (year % 4 = 0 && year % 100 <> 0) || (year % 400 = 0)
+```
+
+### Хвостовая рекурсия
+Сама рекурсия
+```
+let rec countSundaysTailRec year month dayOfWeek acc =
+        if year > 2000 then
+            acc
+        else
+            let newAcc = if dayOfWeek = 0 then acc + 1 else acc
+
+            let days =
+                if month = 1 && isLeapYear year then
+                    29
+                else
+                    daysInMonth.[month]
+
+            let nextDayOfWeek = (dayOfWeek + days) % 7
+            let (newYear, newMonth) = if month = 11 then (year + 1, 0) else (year, month + 1)
+            countSundaysTailRec newYear newMonth nextDayOfWeek newAcc
+```
+Чтобы сделать рекурсию хвостовой без проблем, используется аккумулятор
+### Обычная рекурсия
+Поэтому реализация через обычную рекурсия, схожа, но эта рекурсия не хвостовая т.к. возвращается вызов с выражением, а не просто вызов
+```
+let rec countSundaysRec year month dayOfWeek =
+        if year > 2000 then
+            0
+        else
+            let count = if dayOfWeek = 0 then 1 else 0
+
+            let days =
+                if month = 1 && isLeapYear year then
+                    29
+                else
+                    daysInMonth.[month]
+
+            let nextDayOfWeek = (dayOfWeek + days) % 7
+            let (newYear, newMonth) = if month = 11 then (year + 1, 0) else (year, month + 1)
+            count + countSundaysRec newYear newMonth nextDayOfWeek
+```
+### Модульная реализация
+Генерация месяцев
+```
+let dates =
+    [ for y in 1901..2000 do
+          for m in 0..11 -> (y, m) ]
+```
+Нахождение первого дня (с использованием mutable)
+```
+let calculateFirstDay (year, month) =
+    let mutable dayOfWeek = 2
+
+    for y in 1901 .. year - 1 do
+        for m in 0..11 do
+            let days = if m = 1 && isLeapYear y then 29 else daysInMonth.[m]
+            dayOfWeek <- (dayOfWeek + days) % 7
+
+    for m in 0 .. month - 1 do
+        let days = if m = 1 && isLeapYear year then 29 else daysInMonth.[m]
+        dayOfWeek <- (dayOfWeek + days) % 7
+
+    dayOfWeek
+```
+Результат
+```
+let modularSolution () =
+    dates |> List.filter (fun date -> calculateFirstDay date = 0) |> List.length
+```
+### Генерация с помощью map
+Схожа с модульной реализацией, но генерируется список единиц и находится сумма элементов списка
+```
+let mapGenSolution () =
+    dates
+    |> List.map (fun date -> if calculateFirstDay date = 0 then 1 else 0)
+    |> List.sum
+```
+### Бесконечные последовательности
+Меняется генерация месяцев
+```
+let infiniteDates =
+    Seq.initInfinite (fun i ->
+        let year = 1901 + (i / 12)
+        let month = i % 12
+        (year, month))
+    |> Seq.takeWhile (fun (y, _) -> y <= 2000)
+```
+Нахождение результата как в предыдущей реализации но с новой генерацией последовательности
+```
+let infSeqSolution () =
+    infiniteDates
+    |> Seq.map (fun date -> if calculateFirstDay date = 0 then 1 else 0)
+    |> Seq.sum
+```
+
+### Циклы
+Подсчёт в цикле и возвращение результата
+```
+let countSundaysForLoop () =
+    let mutable dayOfWeek = 2 // Вторник
+    let mutable count = 0
+
+    for year in 1901..2000 do
+        for month in 0..11 do
+            if dayOfWeek = 0 then
+                count <- count + 1
+
+            let days =
+                if month = 1 && isLeapYear year then
+                    29
+                else
+                    daysInMonth.[month]
+
+            dayOfWeek <- (dayOfWeek + days) % 7
+
+    count
+```
+
+## Вывод
+В ходе работы я на практике поняла разницу между написанием кода на функциональных языках и императивных языках. 
