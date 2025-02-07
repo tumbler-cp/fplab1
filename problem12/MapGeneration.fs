@@ -10,7 +10,8 @@ let countDivisors n =
     |> Seq.collect (fun i -> if i = n / i then [ i ] else [ i; n / i ])
     |> Seq.length
 
+let generateTriangleNumbers limit =
+    seq { 1..limit } |> Seq.map triangleNumber
+
 let mapGenSolution () =
-    Seq.initInfinite id
-    |> Seq.map (fun n -> triangleNumber (n + 1))
-    |> Seq.find (fun n -> countDivisors n > 500)
+    generateTriangleNumbers 100_100 |> Seq.find (fun n -> countDivisors n > 500)

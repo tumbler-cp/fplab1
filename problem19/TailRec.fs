@@ -5,6 +5,7 @@ let tailRecSolution () =
 
     let isLeapYear year =
         (year % 4 = 0 && year % 100 <> 0) || (year % 400 = 0)
+
     let rec countSundaysTailRec year month dayOfWeek acc =
         if year > 2000 then
             acc
