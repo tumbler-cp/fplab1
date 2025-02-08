@@ -23,7 +23,7 @@ jobs:
           dotnet tool restore 
 
       - name: Run Fantomas format check
-        run: dotnet fantomas --check problem12 Tests
+        run: dotnet fantomas --check problem12 problem19 Tests
 
   build:
     runs-on: ubuntu-latest
