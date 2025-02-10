@@ -4,26 +4,22 @@ let triangleNumber n = n * (n + 1) / 2
 
 let countDivisors n =
     let limit = int (sqrt (float n))
-    let mutable count = 0
 
-    for i in 1..limit do
-        if n % i = 0 then
-            count <- count + (if i = n / i then 1 else 2)
-
-    count
+    seq {
+        for i in 1..limit do
+            match n % i with
+            | 0 when i = n / i -> yield 1
+            | 0 -> yield 2
+            | _ -> ()
+    }
+    |> Seq.sum
 
 let loopSolution () =
-    let mutable n = 1
-    let mutable loop = true
-    let mutable result = 0
-
-    while loop do
+    let rec loop n =
         let tri = triangleNumber n
 
-        if countDivisors tri > 500 then
-            result <- tri
-            loop <- false
+        match countDivisors tri with
+        | x when x > 500 -> tri
+        | _ -> loop (n + 1)
 
-        n <- n + 1
-
-    result
+    loop 1
