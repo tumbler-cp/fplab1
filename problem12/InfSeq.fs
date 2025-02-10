@@ -8,10 +8,9 @@ let countDivisors n =
     seq { 1..limit }
     |> Seq.filter (fun i -> n % i = 0)
     |> Seq.collect (fun i ->
-    match i with
+        match i with
         | _ when i = n / i -> [ i ]
-        | _ -> [ i; n / i ]
-    )
+        | _ -> [ i; n / i ])
     |> Seq.length
 
 let triangleNumbers = Seq.initInfinite (fun n -> triangleNumber (n + 1))
