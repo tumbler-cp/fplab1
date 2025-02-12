@@ -3,7 +3,7 @@ module Lab1.Problem19.InfSeq
 let daysInMonth = [| 31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31 |]
 
 let isLeapYear year =
-    (year % 4 = 0 && year % 100 <> 0) || (year % 400 = 0)
+    year % 4 = 0 && year % 100 <> 0 || year % 400 = 0
 
 let calculateFirstDay (year, month) =
     let mutable dayOfWeek = 2
@@ -21,9 +21,9 @@ let calculateFirstDay (year, month) =
 
 let infiniteDates =
     Seq.initInfinite (fun i ->
-        let year = 1901 + (i / 12)
+        let year = 1901 + i / 12
         let month = i % 12
-        (year, month))
+        year, month)
     |> Seq.takeWhile (fun (y, _) -> y <= 2000)
 
 let infSeqSolution () =

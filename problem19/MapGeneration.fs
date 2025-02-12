@@ -3,12 +3,12 @@ module Lab1.Problem19.MapGen
 let daysInMonth = [| 31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31 |]
 
 let isLeapYear year =
-    (year % 4 = 0 && year % 100 <> 0) || (year % 400 = 0)
+    year % 4 = 0 && year % 100 <> 0 || year % 400 = 0
 
 
 let dates =
     [ for y in 1901..2000 do
-          for m in 0..11 -> (y, m) ]
+          for m in 0..11 -> y, m ]
 
 let calculateFirstDay (year, month) =
     let mutable dayOfWeek = 2

@@ -3,7 +3,7 @@ module Lab1.Problem19.Loops
 let daysInMonth = [| 31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31 |]
 
 let isLeapYear year =
-    (year % 4 = 0 && year % 100 <> 0) || (year % 400 = 0)
+    year % 4 = 0 && year % 100 <> 0 || year % 400 = 0
 
 let countSundaysForLoop () =
     let mutable dayOfWeek = 2 // Вторник
