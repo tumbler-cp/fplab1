@@ -10,11 +10,19 @@ let calculateFirstDay (year, month) =
 
     for y in 1901 .. year - 1 do
         for m in 0..11 do
-            let days = if m = 1 && isLeapYear y then 29 else daysInMonth.[m]
+            let days =
+                match m with
+                | 1 when isLeapYear y -> 29
+                | _ -> daysInMonth.[m]
+
             dayOfWeek <- (dayOfWeek + days) % 7
 
     for m in 0 .. month - 1 do
-        let days = if m = 1 && isLeapYear year then 29 else daysInMonth.[m]
+        let days =
+            match m with
+            | 1 when isLeapYear year -> 29
+            | _ -> daysInMonth.[m]
+
         dayOfWeek <- (dayOfWeek + days) % 7
 
     dayOfWeek
@@ -28,5 +36,8 @@ let infiniteDates =
 
 let infSeqSolution () =
     infiniteDates
-    |> Seq.map (fun date -> if calculateFirstDay date = 0 then 1 else 0)
+    |> Seq.map (fun date ->
+        match calculateFirstDay date with
+        | 0 -> 1
+        | _ -> 0)
     |> Seq.sum

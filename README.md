@@ -29,70 +29,70 @@
 ### Хвостовая рекурсия
 Для генерации треугольних чисел используется
 
-```
+```fsharp
 let numTriangle n = n * (n + 1) / 2
 ```
 
 А для подсчёта делитей
-```
+```fsharp
 let countDivs num =
     let rec count n i acc =
-        if i * i > n then
-            acc
-        else if n % i = 0 then
-            if i = n / 1 then
-                count n (i + 1) (acc + 1)
-            else
-                count n (i + 1) (acc + 2)
-        else
-            count n (i + 1) acc
+
+        match () with
+        | _ when i * i > n -> acc
+        | _ when n % i = 0 && i = n / 1 -> count n (i + 1) (acc + 1)
+        | _ when n % i = 0 -> count n (i + 1) (acc + 2)
+        | _ -> count n (i + 1) acc
 
     count num 1 0
 ```
 
 А сама хвостовая рекурсия в ```tailRecSolution```
-```
+```fsharp
 let rec loop n =
-        let triN = numTriangle n
-        let divs = countDivs triN
-        if divs > minDivisors then triN else loop (n + 1)
-```
 
-### Обычная рекурсия
-Идентична решению с хвостовой рекурсией, т.к. 
+        let tri = numTriangle n
+
+        match countDivs tri > minDivisors with
+        | true -> tri
+        | false -> loop (n + 1)
+```
 
 ### Модульная реализация
 
 Генерация треугольного числа
-```
+```fsharp
 let triangleNumber n = n * (n + 1) / 2
 ```
 Подсчёт
-```
+```fsharp
 let countDivisors n =
     let limit = int (sqrt (float n))
 
     seq { 1..limit }
     |> Seq.filter (fun i -> n % i = 0)
-    |> Seq.collect (fun i -> if i = n / i then [ i ] else [ i; n / i ])
+    |> Seq.collect (fun i ->
+        match i with
+        | _ when i = n / i -> [ i ]
+        | _ -> [ i; n / i ])
     |> Seq.length
 ```
 Генерация последовательности
-```
+```fsharp
 let generateTriangleNumbers limit =
     seq { 1..limit } |> Seq.map triangleNumber
 ```
 Фильтрация
-```
+```fsharp
 let filterTriangleNumbers seqNums =
     seqNums |> Seq.filter (fun n -> countDivisors n > 500)
 ```
 Свёртка
-```
+```fsharp
 let findFirst seqNums = seqNums |> Seq.head
 ```
 Результат
-```
+```fsharp
 let modularSolution () =
     generateTriangleNumbers 100_000 |> filterTriangleNumbers |> findFirst
 ```
@@ -101,7 +101,7 @@ let modularSolution () =
 Вспомогательные функции идентичны функциям из рекурсивного подхода
 Функция нахождения нужного числа с помощью map
 
-```
+```fsharp
 let generateTriangleNumbers limit =
     seq { 1..limit } |> Seq.map triangleNumber
 
@@ -113,7 +113,7 @@ let mapGenSolution () =
 **!** Используется функция генерации последовательности из модульной реализации
 
 ### Бесконечная последовательность
-```
+```fsharp
 let mapGenSolution () =
     Seq.initInfinite id
     |> Seq.map (fun n -> triangleNumber (n + 1))
@@ -123,33 +123,29 @@ let mapGenSolution () =
 Да это функция из предыдущей реализации но с бесконечной последовательностью
 
 ### Циклы
-Используются выражения ```for ... in ... do``` и ```while <bool> do```
-```
+Используются выражение ```for ... in ... do```. ```while <bool> do``` не используется, т.к. требует мутабелькую перемнную для остановки
+```fsharp
 let countDivisors n =
     let limit = int (sqrt (float n))
-    let mutable count = 0
 
-    for i in 1..limit do
-        if n % i = 0 then
-            count <- count + (if i = n / i then 1 else 2)
-
-    count
+    seq {
+        for i in 1..limit do
+            match n % i with
+            | 0 when i = n / i -> yield 1
+            | 0 -> yield 2
+            | _ -> ()
+    }
+    |> Seq.sum
 
 let loopSolution () =
-    let mutable n = 1
-    let mutable loop = true
-    let mutable result = 0
-
-    while loop do
+    let rec loop n =
         let tri = triangleNumber n
 
-        if countDivisors tri > 500 then
-            result <- tri
-            loop <- false
+        match countDivisors tri with
+        | x when x > 500 -> tri
+        | _ -> loop (n + 1)
 
-        n <- n + 1
-
-    result
+    loop 1
 ```
 
 ## Проблема №19
@@ -165,7 +161,7 @@ let loopSolution () =
 
 ### Примечание
 Почти во всех реализацию используются этот массив дней в месяце и функция определения высокосности года
-```
+```fsharp
 let daysInMonth = [| 31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31 |]
 
 let isLeapYear year =
@@ -174,74 +170,85 @@ let isLeapYear year =
 
 ### Хвостовая рекурсия
 Сама рекурсия
-```
+```fsharp
 let rec countSundaysTailRec year month dayOfWeek acc =
-        if year > 2000 then
-            acc
-        else
-            let newAcc = if dayOfWeek = 0 then acc + 1 else acc
-
-            let days =
-                if month = 1 && isLeapYear year then
-                    29
-                else
-                    daysInMonth.[month]
-
+        match year, month with
+        | y, _ when y > 2000 -> acc
+        | _, m ->
+            let newAcc = 
+                match dayOfWeek with
+                | 0 -> acc + 1
+                | _ -> acc           
+            let days = 
+                match m with
+                | 1 when isLeapYear year -> 29
+                | _ -> daysInMonth.[m]           
             let nextDayOfWeek = (dayOfWeek + days) % 7
-            let (newYear, newMonth) = if month = 11 then (year + 1, 0) else (year, month + 1)
+            let newYear, newMonth = 
+                match m with
+                | 11 -> year + 1, 0
+                | _ -> year, m + 1
             countSundaysTailRec newYear newMonth nextDayOfWeek newAcc
 ```
 Чтобы сделать рекурсию хвостовой без проблем, используется аккумулятор
 ### Обычная рекурсия
 Поэтому реализация через обычную рекурсия, схожа, но эта рекурсия не хвостовая т.к. возвращается вызов с выражением, а не просто вызов
-```
+```fsharp
 let rec countSundaysRec year month dayOfWeek =
-        if year > 2000 then
-            0
-        else
-            let count = if dayOfWeek = 0 then 1 else 0
+        match year, month with
+        | y, _ when y > 2000 -> 0
+        | _ ->
+            let count = 
+                match dayOfWeek with 
+                | 0 -> 1
+                |_ -> 0
 
             let days =
-                if month = 1 && isLeapYear year then
-                    29
-                else
-                    daysInMonth.[month]
+                match month with
+                | 1 when isLeapYear year -> 29
+                | m -> daysInMonth.[m]
 
             let nextDayOfWeek = (dayOfWeek + days) % 7
-            let (newYear, newMonth) = if month = 11 then (year + 1, 0) else (year, month + 1)
+            let newYear, newMonth =
+                match month with
+                | 11 -> year + 1, 0
+                | _ -> year, month + 1
             count + countSundaysRec newYear newMonth nextDayOfWeek
 ```
 ### Модульная реализация
 Генерация месяцев
-```
+```fsharp
 let dates =
     [ for y in 1901..2000 do
           for m in 0..11 -> (y, m) ]
 ```
-Нахождение первого дня (с использованием mutable)
-```
-let calculateFirstDay (year, month) =
-    let mutable dayOfWeek = 2
-
-    for y in 1901 .. year - 1 do
-        for m in 0..11 do
-            let days = if m = 1 && isLeapYear y then 29 else daysInMonth.[m]
-            dayOfWeek <- (dayOfWeek + days) % 7
-
-    for m in 0 .. month - 1 do
-        let days = if m = 1 && isLeapYear year then 29 else daysInMonth.[m]
-        dayOfWeek <- (dayOfWeek + days) % 7
-
-    dayOfWeek
+Нахождение первого дня
+```fsharp
+let rec calculateFirstDay (year, month) =
+    let rec daysInYear y =
+        [ for m in 0..11 -> if m = 1 && isLeapYear y then 29 else daysInMonth.[m] ]
+    
+    let rec daysUpToYear y =
+        match y with
+        | 1901 -> 0
+        | _ -> (daysInYear (y - 1) |> List.sum) + daysUpToYear (y - 1)
+    
+    let rec daysUpToMonth y m =
+        match m with
+        | 0 -> 0
+        | _ -> (if m = 1 && isLeapYear y then 29 else daysInMonth.[m - 1]) + daysUpToMonth y (m - 1)
+    
+    let totalDays = daysUpToYear year + daysUpToMonth year month
+    (totalDays + 2) % 7
 ```
 Результат
-```
+```fsharp
 let modularSolution () =
     dates |> List.filter (fun date -> calculateFirstDay date = 0) |> List.length
 ```
 ### Генерация с помощью map
 Схожа с модульной реализацией, но генерируется список единиц и находится сумма элементов списка
-```
+```fsharp
 let mapGenSolution () =
     dates
     |> List.map (fun date -> if calculateFirstDay date = 0 then 1 else 0)
@@ -249,42 +256,43 @@ let mapGenSolution () =
 ```
 ### Бесконечные последовательности
 Меняется генерация месяцев
-```
+```fsharp
 let infiniteDates =
     Seq.initInfinite (fun i ->
-        let year = 1901 + (i / 12)
+        let year = 1901 + i / 12
         let month = i % 12
-        (year, month))
+        year, month)
     |> Seq.takeWhile (fun (y, _) -> y <= 2000)
 ```
 Нахождение результата как в предыдущей реализации но с новой генерацией последовательности
-```
+```fsharp
 let infSeqSolution () =
     infiniteDates
-    |> Seq.map (fun date -> if calculateFirstDay date = 0 then 1 else 0)
+    |> Seq.map (fun date -> match calculateFirstDay date with
+                            | 0 -> 1
+                            | _ -> 0)
     |> Seq.sum
 ```
 
 ### Циклы
 Подсчёт в цикле и возвращение результата
-```
+```fsharp
 let countSundaysForLoop () =
-    let mutable dayOfWeek = 2 // Вторник
-    let mutable count = 0
-
-    for year in 1901..2000 do
-        for month in 0..11 do
-            if dayOfWeek = 0 then
-                count <- count + 1
-
+    let monthsSeq = seq {
+        for year in 1901 .. 2000 do
+            for month in 0 .. 11 do
+                yield (year, month)
+    }
+    
+    let finalDay, count =
+        Seq.fold (fun (dayOfWeek, count) (year, month) ->
+            let count = if dayOfWeek = 0 then count + 1 else count
             let days =
-                if month = 1 && isLeapYear year then
-                    29
-                else
-                    daysInMonth.[month]
-
-            dayOfWeek <- (dayOfWeek + days) % 7
-
+                if month = 1 && isLeapYear year then 29
+                else daysInMonth.[month]
+            let dayOfWeek = (dayOfWeek + days) % 7
+            (dayOfWeek, count)
+        ) (2, 0) monthsSeq
     count
 ```
 
