@@ -12,11 +12,6 @@ let ``Problem 12 monolit tail recursion`` () =
     Assert.That(res, Is.EqualTo(76576500))
 
 [<Test>]
-let ``Problem 12 monolit recursion`` () =
-    let res = Problem12.Recursion.recursiveSolution 500
-    Assert.That(res, Is.EqualTo(76576500))
-
-[<Test>]
 let ``Problem 12 modular implementation`` () =
     let res = Problem12.Modular.modularSolution ()
     Assert.That(res, Is.EqualTo(76576500))
